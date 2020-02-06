@@ -1,7 +1,15 @@
+default: lint test
+
 lint:
 	$(GOPATH)/bin/golint .
 
-install:
-	go get -u golang.org/x/lint/golint
+test:
+	go test -v
 
-.PHONY: lint install
+install:
+	@echo "$(shell go version)"
+	@echo "GOPATH: $(GOPATH)"
+	go get -u golang.org/x/lint/golint
+	go get -u github.com/stretchr/testify
+
+.PHONY: default lint test install
