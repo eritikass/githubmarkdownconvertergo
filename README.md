@@ -1,5 +1,7 @@
 # GitHub markdown converter
 
+> `go get -u github.com/eritikass/githubmarkdownconvertergo`
+
 ```go
 package main
 
