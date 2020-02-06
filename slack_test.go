@@ -47,4 +47,23 @@ func TestSlack(t *testing.T) {
  • remove DELETE /v1/message (<https://github.com/foo/boo/issues/121|#121>) (<https://github.com/foo/boo/commit/3523r42|3523r42>)`
 
 	assert.Equal(msgSlack, Slack(msgGithub))
+
+	// test headlines parse
+	optWithHeadlines := SlackConvertOptions{
+		Headlines: true,
+	}
+	assert.Equal("*fooo*", Slack("### fooo", optWithHeadlines))
+	assert.Equal("*Boo foo 123*", Slack(" # Boo foo 123", optWithHeadlines))
+	assert.Equal(`
+*Features*
+`, Slack(`
+	### Features
+`, optWithHeadlines))
+
+	msgSlackHeadlinesBold := `*<https://github.com/foo/boo/compare/v1.49.3...v1.50.0|1.50.0> (2015-02-12)*
+*Features*
+ • add GET /v1/events (<https://github.com/foo/boo/issues/134|#134>) (<https://github.com/foo/boo/commit/1726806|1726806>)
+ • remove DELETE /v1/message (<https://github.com/foo/boo/issues/121|#121>) (<https://github.com/foo/boo/commit/3523r42|3523r42>)`
+
+	assert.Equal(msgSlackHeadlinesBold, Slack(msgGithub, optWithHeadlines))
 }

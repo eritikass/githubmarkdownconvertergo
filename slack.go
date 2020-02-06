@@ -6,10 +6,23 @@ import (
 	"strings"
 )
 
-// Slack returns github markdown converted to slack
-func Slack(markdown string) string {
+// SlackConvertOptions contains options to fine-toon GitHub to Slack markdown convert
+type SlackConvertOptions struct {
+	// Headlines will define if GitHub headlines will be updated to be bold text in slack
+	// there is no headlines as sucks in Slack
+	Headlines bool
+}
+
+// Slack returns github markdown converted to Slack
+func Slack(markdown string, options ...SlackConvertOptions) string {
 	var re *regexp.Regexp
 
+	opt := SlackConvertOptions{}
+	if len(options) > 0 {
+		opt = options[0]
+	}
+
+	// TODO: write proper regex
 	linkRegex := ".*"
 
 	// bold **TEXT**  -> *TEXT*
@@ -54,6 +67,11 @@ func Slack(markdown string) string {
 	})
 	re = regexp.MustCompile(`(?m)((\n[ ]{0,})(\*))`)
 	markdown = re.ReplaceAllString(markdown, "$2•")
+
+	if opt.Headlines {
+		re = regexp.MustCompile(`(?m)((^\t?[ ]{0,15}#{1,4}[ ]{1,})(.+))`)
+		markdown = re.ReplaceAllString(markdown, "*$3*")
+	}
 
 	return markdown
 }
