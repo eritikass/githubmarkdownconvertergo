@@ -59,6 +59,7 @@ func TestSlack(t *testing.T) {
 `, Slack(`
 	### Features
 `, optWithHeadlines))
+	assert.Equal("*Features*\n\nA feature", Slack("## Features\r\n\r\nA feature", optWithHeadlines))
 
 	msgSlackHeadlinesBold := `*<https://github.com/foo/boo/compare/v1.49.3...v1.50.0|1.50.0> (2015-02-12)*
 *Features*

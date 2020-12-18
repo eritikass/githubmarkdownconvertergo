@@ -25,6 +25,9 @@ func Slack(markdown string, options ...SlackConvertOptions) string {
 	// TODO: write proper regex
 	linkRegex := ".*"
 
+	// This makes sure all newlines are in the correct format, since this will otherwise cause issues with further replacements
+	markdown = strings.ReplaceAll(markdown, "\r\n", "\n")
+
 	// bold **TEXT**  -> *TEXT*
 	re = regexp.MustCompile(`(?miU)((\*\*).+(\*\*))`)
 	markdown = re.ReplaceAllStringFunc(markdown, func(s string) string {
