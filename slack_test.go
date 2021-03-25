@@ -16,6 +16,7 @@ func TestSlack(t *testing.T) {
 	assert.Equal("text ~strike~ more*bold*-te*x*t", Slack("text ~~strike~~ more**bold**-te**x**t"))
 	// links
 	assert.Equal("text <http://www.foo.com|This is link title> more-text", Slack("text [This is link title](http://www.foo.com) more-text"))
+	assert.Equal("[text] <http://www.foo.com|This is link title> more-text", Slack("[text] [This is link title](http://www.foo.com) more-text"))
 	// two links and bold
 	assert.Equal("text <http://google.com/|Google> (<https://xxx.com/|x*BB*x>) more-text", Slack("text [Google](http://google.com/) ([x**BB**x](https://xxx.com/)) more-text"))
 	// list
