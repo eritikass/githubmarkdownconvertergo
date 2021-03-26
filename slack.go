@@ -43,7 +43,7 @@ func Slack(markdown string, options ...SlackConvertOptions) string {
 	})
 
 	// links [TEXT](link) -> <link|TEXT>
-	re = regexp.MustCompile(`(?miU)(\[(?P<name>.+)\]\((?P<link>` + linkRegex + `)\))`)
+	re = regexp.MustCompile(`(?miU)(\[(?P<name>[^\]]+)\]\((?P<link>` + linkRegex + `)\))`)
 	markdown = re.ReplaceAllStringFunc(markdown, func(s string) string {
 		match := re.FindStringSubmatch(s)
 		name := ""
