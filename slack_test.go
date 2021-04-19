@@ -74,3 +74,25 @@ func TestSlackHeadlinesOption(t *testing.T) {
 
 	assert.Equal(msgSlackHeadlinesBold, Slack(msgGithub, optWithHeadlines))
 }
+
+func TestSlackRepoNameOption(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("Enhance link regexp <https://github.com/eritikass/githubmarkdownconvertergo/pull/134|#134>", Slack("Enhance link regexp #134", SlackConvertOptions{
+		RepoName: "eritikass/githubmarkdownconvertergo",
+	}))
+
+	actualInput := `
+	• add GET /v1/events (#134)
+	• remove DELETE /v1/message, (#121)
+	• remove DELETE /v1/message (#121)
+	• fix UPDATE /v1/user/meta, #123`
+	expected := `
+	• add GET /v1/events (<https://github.com/foo-owner/boo-repo/pull/134|#134>)
+	• remove DELETE /v1/message, (<https://github.com/foo-owner/boo-repo/pull/121|#121>)
+	• remove DELETE /v1/message (<https://github.com/foo-owner/boo-repo/pull/121|#121>)
+	• fix UPDATE /v1/user/meta, <https://github.com/foo-owner/boo-repo/pull/123|#123>`
+	assert.Equal(expected, Slack(actualInput, SlackConvertOptions{
+		RepoName: "foo-owner/boo-repo",
+	}))
+}
