@@ -37,6 +37,11 @@ func TestSlack(t *testing.T) {
 
 	assert.Equal(listSlack, Slack(listGithub))
 
+}
+
+func TestSlackHeadlinesOption(t *testing.T) {
+	assert := assert.New(t)
+
 	// release message
 	msgGithub := `# [1.50.0](https://github.com/foo/boo/compare/v1.49.3...v1.50.0) (2015-02-12)
 ### Features
