@@ -26,7 +26,7 @@ func main() {
 		Headlines: true,
 		// Name of the git repo, used to link pull-requests/issues
 		// repo name to be given in format "<owner>/<name>" (example: eritikass/githubmarkdownconvertergo)
-		// optiona: default not used
+		// optional: default not used
 		RepoName: "eritikass/githubmarkdownconvertergo",
 	})
 }
