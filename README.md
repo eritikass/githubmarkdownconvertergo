@@ -18,8 +18,10 @@ func main() {
 	// convert to Slack markdown
 	fmt.Println("Slack: ", githubmarkdownconvertergo.Slack(markdown))
 
+
+  markdown2 := "repo tickets in text, #6, #7"
 	// optonally githubmarkdownconvertergo.Slack is also accepting 2'nd argument that that can be used to customize converted behavor
-	fmt.Println("Slack: ", githubmarkdownconvertergo.Slack(markdown, githubmarkdownconvertergo.SlackConvertOptions{
+	fmt.Println("Slack: ", githubmarkdownconvertergo.Slack(markdown2, githubmarkdownconvertergo.SlackConvertOptions{
 		// Headlines will define if GitHub headlines will be updated to be bold text in slack
 		// there is no headlines as sucks in Slack
 		// optional: default false
