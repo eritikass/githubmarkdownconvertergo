@@ -88,7 +88,7 @@ func Slack(markdown string, options ...SlackConvertOptions) string {
 
 	if opt.RepoName != "" {
 		// issues, pull-requests  #<number>  => to link of given issue/pr
-		re = regexp.MustCompile(`(?m)([\s(])([#])(\d{1,10})([):\s]|$)`)
+		re = regexp.MustCompile(`(?m)([\s(,;])([#])(\d{1,10})([):\s]|,|;|$)`)
 		markdown = re.ReplaceAllStringFunc(markdown, func(s string) string {
 			match := re.FindStringSubmatch(s)
 			return fmt.Sprintf("%s<%s/%s/pull/%s|%s%s>%s", match[1], gitHubURL, opt.RepoName, match[3], match[2], match[3], match[4])
