@@ -95,4 +95,17 @@ func TestSlackRepoNameOption(t *testing.T) {
 	assert.Equal(expected, Slack(actualInput, SlackConvertOptions{
 		RepoName: "foo-owner/boo-repo",
 	}))
+
+	assert.Equal("multiple refs, <https://github.com/eritikass/githubmarkdownconvertergo/pull/55|#55>, <https://github.com/eritikass/githubmarkdownconvertergo/pull/56|#56>", Slack("multiple refs, #55, #56", SlackConvertOptions{
+		RepoName: "eritikass/githubmarkdownconvertergo",
+	}))
+
+	assert.Equal("multiple refs, <https://github.com/eritikass/githubmarkdownconvertergo/pull/55|#55>; <https://github.com/eritikass/githubmarkdownconvertergo/pull/56|#56>", Slack("multiple refs, #55; #56", SlackConvertOptions{
+		RepoName: "eritikass/githubmarkdownconvertergo",
+	}))
+
+	assert.Equal("multiple refs, <https://github.com/eritikass/githubmarkdownconvertergo/pull/55|#55>, <https://github.com/eritikass/githubmarkdownconvertergo/pull/56|#56>, <https://github.com/eritikass/githubmarkdownconvertergo/pull/22225|#22225> ... and radom text", Slack("multiple refs, #55, #56, #22225 ... and radom text", SlackConvertOptions{
+		RepoName: "eritikass/githubmarkdownconvertergo",
+	}))
+
 }
