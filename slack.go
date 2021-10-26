@@ -73,13 +73,8 @@ func Slack(markdown string, options ...SlackConvertOptions) string {
 	})
 
 	// * -> •
-	re = regexp.MustCompile(`(?s)([^\n][ ]{1,}\*)`)
-	markdown = re.ReplaceAllStringFunc(markdown, func(s string) string {
-		re2 := regexp.MustCompile(`^([ ]+)?(\*)`)
-		return re2.ReplaceAllString(s, "$1•")
-	})
-	re = regexp.MustCompile(`(?m)((\n[ ]{0,})(\*))`)
-	markdown = re.ReplaceAllString(markdown, "$2•")
+	re = regexp.MustCompile(`(?m)(^\s*)\*`)
+	markdown = re.ReplaceAllString(markdown, "$1•")
 
 	if opt.Headlines {
 		re = regexp.MustCompile(`(?m)((^\t?[ ]{0,15}#{1,4}[ ]{1,})(.+))`)
