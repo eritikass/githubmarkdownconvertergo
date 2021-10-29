@@ -34,7 +34,11 @@ func TestSlack(t *testing.T) {
 •
     ddd
       •`
-
+	assert.Equal(listSlack, Slack(listGithub))
+	listGithub = `* test1
+* test2`
+	listSlack = `• test1
+• test2`
 	assert.Equal(listSlack, Slack(listGithub))
 
 }
