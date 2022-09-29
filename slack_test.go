@@ -164,17 +164,28 @@ func TestSlackCustomRefPatterns(t *testing.T) {
 		},
 	}))
 
-	assert.Equal(`
-- <https://xxx.atlassian.net/browse/JIRA-666|JIRA-666>: foo-booo
-- <https://eventum.example.com/issue.php?id=1335|eventum-1335>: cat was here (<https://xxx.atlassian.net/browse/LEGAL-19|LEGAL-19>)
-- <https://example.com/t/555|ticket-555>: lorem ipsum something-something`, Slack(`
-- JIRA-666: foo-booo
-- eventum-1335: cat was here (LEGAL-19)
-- ticket:555: lorem ipsum something-something`, SlackConvertOptions{
+	inputLong := `
+	- JIRA-666: foo-booo (leg-123)
+	- eventum-1335: cat was here (LEGAL-19)
+	- ticket:555: lorem ipsum something-something`
+	expectedLong := `
+	- <https://xxx.atlassian.net/browse/JIRA-666|JIRA-666>: foo-booo (leg-123)
+	- <https://eventum.example.com/issue.php?id=1335|eventum-1335>: cat was here (<https://xxx.atlassian.net/browse/LEGAL-19|LEGAL-19>)
+	- <https://example.com/t/555|ticket-555>: lorem ipsum something-something`
+
+	assert.Equal(expectedLong, Slack(inputLong, SlackConvertOptions{
 		CustomRefPatterns: map[string]string{
 			`(?P<BOARD>JIRA|DEVOPS|LEGAL|COPY|PASTA)-(?P<ID>\d+)`: "[${BOARD}-${ID}](https://xxx.atlassian.net/browse/${BOARD}-${ID})",
 			`eventum-(?P<ID>\d+)`: "[eventum-${ID}](https://eventum.example.com/issue.php?id=${ID})",
 			`ticket:(?P<ID>\d+)`:  "<https://example.com/t/${ID}|ticket-${ID}>",
+		},
+	}))
+
+	assert.Equal(expectedLong, Slack(inputLong, SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`(?P<BOARD>[A-Z]{3,10})-(?P<ID>\d{2,5})`: "[${BOARD}-${ID}](https://xxx.atlassian.net/browse/${BOARD}-${ID})",
+			`eventum-(?P<ID>\d+)`:                    "[eventum-${ID}](https://eventum.example.com/issue.php?id=${ID})",
+			`ticket:(?P<ID>\d+)`:                     "<https://example.com/t/${ID}|ticket-${ID}>",
 		},
 	}))
 
