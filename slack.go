@@ -39,7 +39,11 @@ func Slack(markdown string, options ...SlackConvertOptions) string {
 		startOfPattern := `(?P<THE_START_OF_MATCH>^|[\s\[\(])`
 		endOfPattern := `(?P<THE_END_OF_MATCH>$|[\s:\]\),.!])`
 		for pattern, replace := range opt.CustomRefPatterns {
-			re = regexp.MustCompile(fmt.Sprintf(`%s%s%s`, startOfPattern, pattern, endOfPattern))
+			re, err := regexp.Compile(fmt.Sprintf(`%s%s%s`, startOfPattern, pattern, endOfPattern))
+			if err != nil {
+				println("ERROR_USING_CustomRefPatterns: " + err.Error())
+				continue
+			}
 			markdown = re.ReplaceAllString(markdown, fmt.Sprintf(`${THE_START_OF_MATCH}%s${THE_END_OF_MATCH}`, replace))
 		}
 	}
