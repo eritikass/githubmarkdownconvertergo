@@ -35,7 +35,7 @@ func main() {
 		CustomRefPatterns: map[string]string{
 			// key is patterns that is searched using regex from markdown (try out using https://regex101.com/)
 			// any capture groups you define there can be used in value. 
-			// NB: only capture groups by name can be accessed, do no try to use via index.
+			// NB: only capture groups by name can be accessed, do not try to use via index.
 			`JIRA-(?P<ID>\d+)`: "https://test.atlassian.net/browse/JIRA-${ID})",
 			`(?P<BOARD>DEVOPS|LEGAL|COPY|PASTA)-(?P<ID>\d+)`: "[${BOARD}-${ID}](https://xxx.atlassian.net/browse/${BOARD}-${ID})",
 			`eventum-(?P<ID>\d+)`: "https://eventum.example.com/issue.php?id=${ID}",
