@@ -16,6 +16,8 @@ type SlackConvertOptions struct {
 	RepoName string
 	// GitHub root url, if not given "https://github.com" is used as default
 	GitHubURL string
+	// CustomRefPatterns is list of patterns used to replace
+	CustomRefPatterns map[string]string
 }
 
 // Slack returns github markdown converted to Slack
@@ -30,6 +32,20 @@ func Slack(markdown string, options ...SlackConvertOptions) string {
 	gitHubURL := opt.GitHubURL
 	if gitHubURL == "" {
 		gitHubURL = "https://github.com"
+	}
+
+	if len(opt.CustomRefPatterns) > 0 {
+		// using start and end patterns make sure we will not find match middle of the word etc.
+		startOfPattern := `(?P<THE_START_OF_MATCH>^|[\s\[\(])`
+		endOfPattern := `(?P<THE_END_OF_MATCH>$|[\s:\]\),.!])`
+		for pattern, replace := range opt.CustomRefPatterns {
+			re, err := regexp.Compile(fmt.Sprintf(`%s%s%s`, startOfPattern, pattern, endOfPattern))
+			if err != nil {
+				println("ERROR_USING_CustomRefPatterns: " + err.Error())
+				continue
+			}
+			markdown = re.ReplaceAllString(markdown, fmt.Sprintf(`${THE_START_OF_MATCH}%s${THE_END_OF_MATCH}`, replace))
+		}
 	}
 
 	// TODO: write proper regex

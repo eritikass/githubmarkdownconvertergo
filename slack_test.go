@@ -113,3 +113,85 @@ func TestSlackRepoNameOption(t *testing.T) {
 	}))
 
 }
+
+func TestSlackCustomRefPatterns(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("https://xxx.atlassian.net/browse/JIRA-35", Slack("JIRA-35", SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`(?P<BOARD>JIRA|DEVOPS)-(?P<ID>\d+)`: "https://xxx.atlassian.net/browse/${BOARD}-${ID}",
+		},
+	}))
+
+	assert.Equal(" https://xxx.atlassian.net/browse/JIRA-1   ", Slack(" JIRA-1   ", SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`JIRA-(?P<ID>\d+)`: "https://xxx.atlassian.net/browse/JIRA-${ID}",
+		},
+	}))
+
+	assert.Equal(" [https://xxx.atlassian.net/browse/JIRA-1]   ", Slack(" [JIRA-1]   ", SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`JIRA-(?P<ID>\d+)`: "https://xxx.atlassian.net/browse/JIRA-${ID}",
+		},
+	}))
+
+	assert.Equal(" (https://xxx.atlassian.net/browse/JIRA-1)   ", Slack(" (JIRA-1)   ", SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`JIRA-(?P<ID>\d+)`: "https://xxx.atlassian.net/browse/JIRA-${ID}",
+		},
+	}))
+	assert.Equal(" (https://xxx.atlassian.net/browse/JIRA-1, https://xxx.atlassian.net/browse/JIRA-23)   ", Slack(" (JIRA-1, UPS-23)   ", SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`(?P<BOARD>JIRA|UPS)-(?P<ID>\d+)`: "https://xxx.atlassian.net/browse/JIRA-${ID}",
+		},
+	}))
+
+	assert.Equal("https://xxx.atlassian.net/browse/JIRA-356", Slack("JIRA-356", SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`(?P<BOARD>JIRA|DEVOPS)-(?P<ID>\d{1,10})`: "https://xxx.atlassian.net/browse/${BOARD}-${ID}",
+		},
+	}))
+
+	assert.Equal("XXX https://xxx.atlassian.net/browse/JIRA-12 UUU", Slack("XXX JIRA-12 UUU", SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`JIRA-(?P<ID>\d+)`: "https://xxx.atlassian.net/browse/JIRA-${ID}",
+		},
+	}))
+
+	assert.Equal("XXXJIRA-2YYY", Slack("XXXJIRA-2YYY", SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`JIRA-(?P<ID>\d+)`: "https://xxx.atlassian.net/browse/JIRA-${ID}",
+		},
+	}))
+
+	inputLong := `
+	- JIRA-666: foo-booo (leg-123)
+	- eventum-1335: cat was here (LEGAL-19)
+	- ticket:555: lorem ipsum something-something`
+	expectedLong := `
+	- <https://xxx.atlassian.net/browse/JIRA-666|JIRA-666>: foo-booo (leg-123)
+	- <https://eventum.example.com/issue.php?id=1335|eventum-1335>: cat was here (<https://xxx.atlassian.net/browse/LEGAL-19|LEGAL-19>)
+	- <https://example.com/t/555|ticket-555>: lorem ipsum something-something`
+
+	assert.Equal(expectedLong, Slack(inputLong, SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`(?P<BOARD>JIRA|DEVOPS|LEGAL|COPY|PASTA)-(?P<ID>\d+)`: "[${BOARD}-${ID}](https://xxx.atlassian.net/browse/${BOARD}-${ID})",
+			`eventum-(?P<ID>\d+)`: "[eventum-${ID}](https://eventum.example.com/issue.php?id=${ID})",
+			`ticket:(?P<ID>\d+)`:  "<https://example.com/t/${ID}|ticket-${ID}>",
+		},
+	}))
+
+	assert.Equal(expectedLong, Slack(inputLong, SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`(?P<BOARD>[A-Z]{3,10})-(?P<ID>\d{2,5})`: "[${BOARD}-${ID}](https://xxx.atlassian.net/browse/${BOARD}-${ID})",
+			`eventum-(?P<ID>\d+)`:                    "[eventum-${ID}](https://eventum.example.com/issue.php?id=${ID})",
+			`ticket:(?P<ID>\d+)`:                     "<https://example.com/t/${ID}|ticket-${ID}>",
+		},
+	}))
+
+	assert.Equal("https://example.com", Slack("example_com", SlackConvertOptions{
+		CustomRefPatterns: map[string]string{
+			`example_com`: "https://example.com",
+		},
+	}))
+}
