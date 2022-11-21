@@ -34,10 +34,11 @@ func Slack(markdown string, options ...SlackConvertOptions) string {
 		gitHubURL = "https://github.com"
 	}
 
+	// using start and end patterns make sure we will not find match middle of the word etc.
+	startOfPattern := `(?P<THE_START_OF_MATCH>^|[\s\[\(])`
+	endOfPattern := `(?P<THE_END_OF_MATCH>$|[\s:\]\),.!])`
+
 	if len(opt.CustomRefPatterns) > 0 {
-		// using start and end patterns make sure we will not find match middle of the word etc.
-		startOfPattern := `(?P<THE_START_OF_MATCH>^|[\s\[\(])`
-		endOfPattern := `(?P<THE_END_OF_MATCH>$|[\s:\]\),.!])`
 		for pattern, replace := range opt.CustomRefPatterns {
 			re, err := regexp.Compile(fmt.Sprintf(`%s%s%s`, startOfPattern, pattern, endOfPattern))
 			if err != nil {
@@ -50,6 +51,10 @@ func Slack(markdown string, options ...SlackConvertOptions) string {
 
 	// TODO: write proper regex
 	linkRegex := ".*"
+
+	// usernames @xxx
+	re = regexp.MustCompile(startOfPattern + "@(?P<USERNAME>[a-zA-Z0-9]{3,20})" + endOfPattern)
+	markdown = re.ReplaceAllString(markdown, fmt.Sprintf("${THE_START_OF_MATCH}<%s/${USERNAME}|@${USERNAME}>${THE_END_OF_MATCH}", gitHubURL))
 
 	// This makes sure all newlines are in the correct format, since this will otherwise cause issues with further replacements
 	markdown = strings.ReplaceAll(markdown, "\r\n", "\n")
