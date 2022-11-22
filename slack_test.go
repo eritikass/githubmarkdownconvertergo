@@ -114,6 +114,15 @@ func TestSlackRepoNameOption(t *testing.T) {
 
 }
 
+func TestSlackGithubUsername(t *testing.T) {
+	assert := assert.New(t)
+
+	assert.Equal("<https://github.com/eritikass|@eritikass>", Slack("@eritikass"))
+	assert.Equal("<https://github.com/someone2Awesome8|@someone2Awesome8>", Slack("@someone2Awesome8"))
+	assert.Equal("example@example.com", Slack("example@example.com"))
+	assert.Equal("foo <https://github.com/eritikass|@eritikass> booo!", Slack("foo @eritikass booo!"))
+}
+
 func TestSlackCustomRefPatterns(t *testing.T) {
 	assert := assert.New(t)
 
