@@ -53,7 +53,7 @@ func Slack(markdown string, options ...SlackConvertOptions) string {
 	linkRegex := ".*"
 
 	// usernames @xxx
-	re = regexp.MustCompile(startOfPattern + "@(?P<USERNAME>[a-zA-Z0-9]{3,20})" + endOfPattern)
+	re = regexp.MustCompile(startOfPattern + "@(?P<USERNAME>[a-z-A-Z0-9]{3,20})" + endOfPattern)
 	markdown = re.ReplaceAllString(markdown, fmt.Sprintf("${THE_START_OF_MATCH}<%s/${USERNAME}|@${USERNAME}>${THE_END_OF_MATCH}", gitHubURL))
 
 	// This makes sure all newlines are in the correct format, since this will otherwise cause issues with further replacements
